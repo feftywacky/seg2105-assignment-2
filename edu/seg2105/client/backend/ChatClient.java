@@ -112,7 +112,7 @@ public class ChatClient extends AbstractClient
 		  else if (command_parts[0].equals("#sethost") && command_parts.length==1) {
 			  clientUI.display("use command #sethost <host_name_here>");
 		  }
-		  else if (command_parts[0].equals("#getport") && command_parts.length==1) {
+		  else if (command_parts[0].equals("#setport") && command_parts.length==1) {
 			  clientUI.display("use command #setport <port_number_here>");
 		  }
 		  else {

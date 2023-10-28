@@ -4,6 +4,10 @@ package edu.seg2105.edu.server.backend;
 // license found at www.lloseng.com 
 
 
+import java.io.IOException;
+
+import edu.seg2105.client.backend.ChatClient;
+import edu.seg2105.client.common.ChatIF;
 import ocsf.server.*;
 
 /**
@@ -15,7 +19,7 @@ import ocsf.server.*;
  * @author Fran&ccedil;ois B&eacute;langer
  * @author Paul Holden
  */
-public class EchoServer extends AbstractServer 
+public class EchoServer extends AbstractServer
 {
   //Class variables *************************************************
   
@@ -23,6 +27,10 @@ public class EchoServer extends AbstractServer
    * The default port to listen on.
    */
   final public static int DEFAULT_PORT = 5555;
+  
+  
+  
+  ChatIF serverUI;
   
   //Constructors ****************************************************
   
@@ -100,39 +108,92 @@ public class EchoServer extends AbstractServer
 	  this.sendToAllClients(msg);
   }
   
-  
-  //Class methods ***************************************************
-  
   /**
-   * This method is responsible for the creation of 
-   * the server instance (there is no UI in this phase).
+   * This method handles all data coming from the UI
    *
-   * @param args[0] The port number to listen on.  Defaults to 5555 
-   *          if no argument is entered.
+   * @param message The message from the UI
+ * @throws IOException 
    */
-  public static void main(String[] args) 
+  public void handleMessageFromServerUI(String message) throws IOException
   {
-    int port = 0; //Port to listen on
-
-    try
-    {
-      port = Integer.parseInt(args[0]); //Get port from command line
-    }
-    catch(Throwable t)
-    {
-      port = DEFAULT_PORT; //Set port to 5555
-    }
-	
-    EchoServer sv = new EchoServer(port);
-    
-    try 
-    {
-      sv.listen(); //Start listening for connections
-    } 
-    catch (Exception ex) 
-    {
-      System.out.println("ERROR - Could not listen for clients!");
+    if (message.charAt(0) == '#')
+      handleCommand(message);
+    else{
+      // send message to clients
+      serverUI.display(message);
+      this.sendToAllClients("SERVER MSG> " + message);
     }
   }
+  
+  private void handleCommand(String command) throws IOException
+  {
+	  String[] command_parts = command.split(" ");
+	  if (command_parts.length==1) 
+	  {
+		  if (command_parts[0].equals("#quit") && command_parts.length==1) {
+			  quit();
+		  }
+		  else if (command_parts[0].equals("#stop") && command_parts.length==1) {
+			  stopListening();
+		  }
+		  else if (command_parts[0].equals("#close") && command_parts.length==1) {
+			  close();
+		  }
+		  else if (command_parts[0].equals("#start") && command_parts.length==1) {
+			  if (!isListening())
+			  {
+				  listen();
+			  }
+			  else
+			  {
+				  serverUI.display("server is already listening to clients");
+			  }
+		  }
+		  else if (command_parts[0].equals("#getport") && command_parts.length==1) {
+			  serverUI.display(String.valueOf(this.getPort()));
+		  }
+		  else if (command_parts[0].equals("#setport") && command_parts.length==1) {
+			  serverUI.display("use command #setport <port_number_here>");
+		  }
+		  else {
+			  serverUI.display("not a valid command");
+		  }
+	  }
+	  else if (command_parts.length==2) {
+		  if (command_parts[0].equals("#setport")) {
+			  if (!isListening() && getNumberOfClients()==0) {
+				  String temp = command_parts[1];
+				  int port = Integer.parseInt(temp);
+				  this.setPort(port);
+			  }
+			  else {
+				  serverUI.display("cannot set port when logged in");
+			  }  
+		  }
+		  else {
+			  serverUI.display("not a valid command");
+		  }
+	  }
+	  else {
+		  serverUI.display("not a valid command");
+	  }
+  }
+  
+  /**
+   * Terminates the server.
+   */
+  public void quit()
+  {
+    try
+    {
+    	close();	
+    }
+    catch(IOException e)
+    {
+    	System.exit(0);
+    }
+  }
+  
+  
 }
 //End of EchoServer class
