@@ -71,7 +71,12 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+    	if (message.charAt(0)=='#')
+    	{
+    		handleCommand(message);
+    	}
+    	else
+    		sendToServer(message);
     }
     catch(IOException e)
     {
@@ -79,6 +84,69 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server.  Terminating client.");
       quit();
     }
+  }
+  
+  private void handleCommand(String command) throws IOException
+  {
+	  String[] command_parts = command.split(" ");
+	  if (command_parts.length==1) 
+	  {
+		  if (command_parts[0].equals("#quit") && command_parts.length==1) {
+			  quit();
+		  }
+		  else if (command_parts[0].equals("#logoff") && command_parts.length==1) {
+			  this.closeConnection();
+		  }
+		  else if (command_parts[0].equals("#login") && command_parts.length==1) {
+			  if (!this.isConnected())
+			  {
+				  this.openConnection();
+			  }
+		  }
+		  else if (command_parts[0].equals("#gethost") && command_parts.length==1) {
+			  clientUI.display(this.getHost());
+		  }
+		  else if (command_parts[0].equals("#getport") && command_parts.length==1) {
+			  clientUI.display(String.valueOf(this.getPort()));
+		  }
+		  else if (command_parts[0].equals("#sethost") && command_parts.length==1) {
+			  clientUI.display("use command #sethost <host_name_here>");
+		  }
+		  else if (command_parts[0].equals("#getport") && command_parts.length==1) {
+			  clientUI.display("use command #setport <port_number_here>");
+		  }
+		  else {
+			  clientUI.display("not a valid command");
+		  }
+	  }
+	  else if (command_parts.length==2) {
+		  if (command_parts[0].equals("#sethost")) {
+			  if (!this.isConnected()) {
+				  String host = command_parts[1];
+				  this.setHost(host);
+			  }
+			  else
+			  {
+				  clientUI.display("cannot set host when logged in");
+			  }
+		  }
+		  else if (command_parts[0].equals("#setport")) {
+			  if (!this.isConnected()) {
+				  String temp = command_parts[1];
+				  int port = Integer.parseInt(temp);
+				  this.setPort(port);
+			  }
+			  else {
+				  clientUI.display("cannot set port when logged in");
+			  }  
+		  }
+		  else {
+			  clientUI.display("not a valid command");
+		  }
+	  }
+	  else {
+		  clientUI.display("not a valid command");
+	  }
   }
   
   /**

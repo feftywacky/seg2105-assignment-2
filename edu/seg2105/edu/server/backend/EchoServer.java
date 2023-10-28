@@ -80,7 +80,7 @@ public class EchoServer extends AbstractServer
   @Override
   protected void clientConnected(ConnectionToClient client) {
 	  String client_name = client.toString();
-	  String msg = client_name + " has connected";
+	  String msg = "client " + client_name + " has connected";
 	  System.out.println(msg);
 	  this.sendToAllClients(msg);
   }
@@ -95,7 +95,7 @@ public class EchoServer extends AbstractServer
   @Override
   synchronized protected void clientDisconnected(ConnectionToClient client) {
 	  String client_name = client.toString();
-	  String msg = client_name + " has disconnected";
+	  String msg = "client " + client_name + " has disconnected";
 	  System.out.println(msg);
 	  this.sendToAllClients(msg);
   }
