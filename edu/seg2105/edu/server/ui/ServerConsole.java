@@ -20,7 +20,7 @@ public class ServerConsole implements ChatIF{
 	public ServerConsole(int port) 
 	{
 		fromConsole = new Scanner(System.in); 
-		server = new EchoServer(port);
+		server = new EchoServer(port, this);
 	    try
 	    {
 	      server.listen(); //Start listening for connections
@@ -53,6 +53,7 @@ public class ServerConsole implements ChatIF{
 	    } 
 	    catch (Exception ex) 
 	    {
+	    	ex.printStackTrace();
 	      System.out.println
 	        ("Unexpected error while reading from console!");
 	    }
