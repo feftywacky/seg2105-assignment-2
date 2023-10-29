@@ -161,6 +161,7 @@ public class EchoServer extends AbstractServer
 	  if (command_parts.length==1) 
 	  {
 		  if (command_parts[0].equals("#quit") && command_parts.length==1) {
+			  System.out.println("the server has terminated");
 			  quit();
 		  }
 		  else if (command_parts[0].equals("#stop") && command_parts.length==1) {
