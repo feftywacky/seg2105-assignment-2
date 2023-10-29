@@ -126,7 +126,7 @@ public class ClientConsole implements ChatIF
     }
     catch(ArrayIndexOutOfBoundsException e)
     {
-    	System.out.println("must contain loginID / invalid loginID");
+    	System.out.println("ERROR - No login ID specified. Connection aborted.");
     	System.exit(1);
     }
     
