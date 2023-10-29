@@ -146,9 +146,6 @@ public class ClientConsole implements ChatIF
     	port = DEFAULT_PORT;
     }
     
-    System.out.println(loginID);
-    System.out.println(host);
-    System.out.println(port);
     ClientConsole chat = new ClientConsole(loginID, host, port);
     chat.accept();  //Wait for console data
   }
