@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import edu.seg2105.client.backend.ChatClient;
 import edu.seg2105.client.common.ChatIF;
+import ocsf.client.AbstractClient;
 import ocsf.server.*;
 
 /**
@@ -57,8 +58,35 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+	  if (msg.toString().startsWith("#login "))
+	  {
+		  if (client.getInfo("loginID") != null)
+		  {
+			  try {
+				client.sendToClient("you are logged in already");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		  }
+		  client.setInfo("loginID", msg.toString().substring(7)); // everything after the #login with the space including 	  
+	  }
+	  else
+	  {
+		if (client.getInfo("loginID")==null)
+		{
+			try {
+				client.sendToClient("need to loging in first");
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		System.out.println("Message received: " + msg + " from " + client.getInfo("loginID") + client); 
+		this.sendToAllClients(client.getInfo("loginID") + ": " + msg);
+	  }
+	 
   }
     
   /**
@@ -93,6 +121,7 @@ public class EchoServer extends AbstractServer
 	  System.out.println(msg);
 	  this.sendToAllClients(msg);
   }
+  
 
   /**
    * Implements the hook method called each time a client disconnects.
@@ -185,15 +214,10 @@ public class EchoServer extends AbstractServer
    */
   public void quit()
   {
-    try
-    {
-    	close();	
-    }
-    catch(IOException e)
-    {
-    	System.exit(0);
-    }
+    System.exit(0);
   }
+  
+
   
   
 }
