@@ -50,7 +50,6 @@ public class ChatClient extends AbstractClient
     openConnection();
     sendToServer("#login " + loginID);
     
-    
   }
 
   

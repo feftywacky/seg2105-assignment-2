@@ -59,6 +59,7 @@ public class ClientConsole implements ChatIF
     } 
     catch(IOException exception) 
     {
+    	System.out.println("make sure host is set to localhost in args[1]");
       System.out.println("Error: Can't setup connection!"
                 + " Terminating client.");
       System.exit(1);

@@ -69,7 +69,12 @@ public class EchoServer extends AbstractServer
 			}
 			
 		  }
-		  client.setInfo("loginID", msg.toString().substring(7)); // everything after the #login with the space including 	  
+		  client.setInfo("loginID", msg.toString().substring(7)); // everything after the #login with the space including 
+		  String msg2 = "Message received: #login " + client.getInfo("loginID") + " from null";
+		  System.out.println(msg2);
+		  String msg3 = client.getInfo("loginID") + " has logged on";
+		  System.out.println(msg3);
+		  this.sendToAllClients(msg3);
 	  }
 	  else
 	  {
@@ -83,7 +88,7 @@ public class EchoServer extends AbstractServer
 			}
 			
 		}
-		System.out.println("Message received: " + msg + " from " + client.getInfo("loginID") + client); 
+		System.out.println("Message received: " + msg + " from <" + client.getInfo("loginID") + "> ");
 		this.sendToAllClients(client.getInfo("loginID") + ": " + msg);
 	  }
 	 
@@ -116,8 +121,7 @@ public class EchoServer extends AbstractServer
    */
   @Override
   protected void clientConnected(ConnectionToClient client) {
-	  String client_name = client.toString();
-	  String msg = "client " + client_name + " has connected";
+	  String msg = "a new client has connected to the server";
 	  System.out.println(msg);
 	  this.sendToAllClients(msg);
   }
@@ -132,8 +136,7 @@ public class EchoServer extends AbstractServer
    */
   @Override
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-	  String client_name = client.toString();
-	  String msg = "client " + client_name + " has disconnected";
+	  String msg = "client " + client.getInfo("loginID") + " has disconnected";
 	  System.out.println(msg);
 	  this.sendToAllClients(msg);
   }
